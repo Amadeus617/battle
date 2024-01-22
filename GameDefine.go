@@ -24,7 +24,7 @@ const (
 	MaxImpactLogicParamCount int = 4  //impact参数数量
 	MaxBuffNumber            int = 10 //强化类buff数量
 	MaxDeBuffNumber          int = 10 //削弱类buff数量
-	MAX_FIGHT_ROUND          int = 20 //最大战斗回合
+	MAX_FIGHT_ROUND          int = 5  //最大战斗回合
 	Distance                 int = 10
 )
 

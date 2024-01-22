@@ -36,6 +36,7 @@ func (s Skill) IsValid() bool {
 }
 
 func (s Skill) CheckCondition(nRound int) bool {
+	fmt.Printf("CheckCondition Skill ==> %#v \n ", s)
 	if s.skillType == EmSkillTypeHeroPassive || s.skillType == EmSkillTypeEquipPassive {
 		return false
 	}
@@ -61,14 +62,15 @@ func (s Skill) CheckCondition(nRound int) bool {
 }
 
 /*
-   3	4	5
+	3	4	5
 
-   0	1	2
-  ------------
-   0	1	2
+	0	1	2
 
-   3	4	5
+------------
 
+	0	1	2
+
+	3	4	5
 */
 func (s *Skill) SelectTarget() bool {
 	var (
@@ -193,12 +195,12 @@ func (s *Skill) CleanUp() {
 	s.pTarget = nil
 }
 
-//获取施放者
+// 获取施放者
 func (s *Skill) GetCaster() *FightObject {
 	return s.pCaster
 }
 
-//设置技能目标列表
+// 设置技能目标列表
 func (s *Skill) SetSkillTarget(pTarget *FightObject) {
 	s.pTarget = pTarget
 }
@@ -417,7 +419,7 @@ func (s *Skill) GetTargetList(nType EmImpactTarget, targetList *TargetList) bool
 }
 
 func (s *Skill) CastSkill(nRound int) bool {
-	//fmt.Println("技能攻击流程:")
+	fmt.Println("技能攻击流程:")
 	var (
 		nRand        int
 		nConAttTimes int
@@ -488,7 +490,7 @@ func (s *Skill) CastSkill(nRound int) bool {
 	return true
 }
 
-//魔法技能流程
+// 魔法技能流程
 func (s *Skill) SkillLogic(nRound int) bool {
 	bRet := s.IsValid()
 	if bRet == false {
@@ -497,7 +499,7 @@ func (s *Skill) SkillLogic(nRound int) bool {
 	}
 	bRet = s.CheckCondition(nRound)
 	if bRet == false {
-		//fmt.Println("技能达不到释放要求")
+		fmt.Println("技能达不到释放要求")
 		return false
 	}
 	bRet = s.SelectTarget()
@@ -505,7 +507,7 @@ func (s *Skill) SkillLogic(nRound int) bool {
 		fmt.Println("目标选择错误")
 		return false
 	}
-	//fmt.Printf("技能信息: %+v \n", s.String())
+	fmt.Printf("技能信息: %+v \n", s.String())
 	bRet = s.CastSkill(nRound)
 	if bRet == false {
 		fmt.Println("技能逻辑错误")
@@ -514,7 +516,7 @@ func (s *Skill) SkillLogic(nRound int) bool {
 	return true
 }
 
-//被动技能
+// 被动技能
 func (s *Skill) PassiveSkillLogic(nRound int) bool {
 	bRet := s.IsValid()
 	if bRet == false {
@@ -542,7 +544,7 @@ func (s *Skill) PassiveSkillLogic(nRound int) bool {
 	return true
 }
 
-//装备技能逻辑
+// 装备技能逻辑
 func (s *Skill) EquipSkillLogic(nRound int, pTarget *FightObject) bool {
 	if s.skillType != EmSkillTypeEquipActive {
 		return false
@@ -573,18 +575,19 @@ func (s *Skill) EquipSkillLogic(nRound int, pTarget *FightObject) bool {
 }
 
 func (s Skill) CanHit() bool {
-	nHit := s.pCaster.GetHit() - s.pTarget.GetDodge()
-	if nHit >= 100 {
-		return true
-	}
-	if nHit <= 0 {
-		return false
-	}
-	nRand := rand.Intn(101)
-	if nRand <= nHit {
-		return true
-	}
-	return false
+	// nHit := s.pCaster.GetHit() - s.pTarget.GetDodge()
+	// if nHit >= 100 {
+	// 	return true
+	// }
+	// if nHit <= 0 {
+	// 	return false
+	// }
+	// nRand := rand.Intn(101)
+	// if nRand <= nHit {
+	// 	return true
+	// }
+	// return false
+	return true
 }
 
 func (s Skill) CanStrike() bool {
@@ -618,12 +621,13 @@ func (s Skill) CanBackAttack() bool {
 }
 
 func (s *Skill) CommonSkillLogic(nRound int) bool {
-	//fmt.Println("普通攻击流程: ")
+	fmt.Println("普通攻击流程: ")
 	pAttackInfo := s.pCaster.GetAttackInfo()
 	bRet := s.SelectTarget()
 
 	if bRet == false {
 		pAttackInfo.CastGuid = InvalidId
+		fmt.Println("普通攻击流程: 111 ")
 		return false
 	}
 	pAttackInfo.CastGuid = s.pCaster.GetGuid()
@@ -632,11 +636,13 @@ func (s *Skill) CommonSkillLogic(nRound int) bool {
 	bRet = s.CanHit()
 	pAttackInfo.BHit = bRet
 	if bRet == false {
+		fmt.Println("普通攻击流程: 222 ")
 		return false
 	}
 	s.pCaster.CastEquipSkill(nRound, s.pTarget)
 	if !s.pTarget.IsActive() {
 		pAttackInfo.Skilled = false
+		fmt.Println("普通攻击流程: 333 ")
 		return true
 	}
 
@@ -648,7 +654,7 @@ func (s *Skill) CommonSkillLogic(nRound int) bool {
 	pAttackInfo.SkillTarget = s.pTarget.GetGuid()
 	if bStrike {
 		//暴击攻击力=当前攻击力*（1+自身暴击伤害/100）
-		nPhysicAttack = int(nPhysicAttack * (1 + s.pCaster.GetStrikeHurt()/100));
+		nPhysicAttack = int(nPhysicAttack * (1 + s.pCaster.GetStrikeHurt()/100))
 	}
 
 	pFightCell := s.pCaster.GetFightCell()
@@ -675,6 +681,6 @@ func (s *Skill) CommonSkillLogic(nRound int) bool {
 		pAttackInfo.BackAttackHurt = backAttack
 	}
 
-	//fmt.Println(pAttackInfo.String())
+	fmt.Println("CommonSkill 普通攻击 ===> ", pAttackInfo.String())
 	return true
 }

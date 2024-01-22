@@ -1,6 +1,9 @@
 package GameFight
 
-import "fmt"
+import (
+	"fmt"
+	"sort"
+)
 
 type FightCell struct {
 	mAttackList  *FightObjList   //攻击方
@@ -10,6 +13,11 @@ type FightCell struct {
 
 	mFightType EmTypeFight //战斗类型
 	mPlusAtt   int         //攻加成
+}
+
+type ActionUnit struct {
+	FightObj *FightObject
+	Speed    int
 }
 
 func (f *FightCell) CleanUp() {
@@ -41,12 +49,12 @@ func (f *FightCell) GetRoundInfo() *FightRoundInfo {
 	return f.mRoundInfo
 }
 
-//攻击方
+// 攻击方
 func (f *FightCell) GetAttackList() *FightObjList {
 	return f.mAttackList
 }
 
-//防守方
+// 防守方
 func (f *FightCell) GetDefenceList() *FightObjList {
 	return f.mDefenceList
 }
@@ -65,7 +73,7 @@ func (f *FightCell) IsWin() bool {
 	return f.mFightInfo.BWin
 }
 
-//初始化战斗信息
+// 初始化战斗信息
 func (f *FightCell) initFightInfo() {
 	//读表
 	f.mFightInfo.MaxFightDistance = 10
@@ -98,7 +106,7 @@ func (f *FightCell) initFightInfo() {
 	}
 }
 
-//初始化每回合双方的初始数据
+// 初始化每回合双方的初始数据
 func (f *FightCell) initRoundInfo() {
 	f.mRoundInfo.CleanUp()
 	for i := 0; i < MaxMatrixCellCount; i++ {
@@ -160,14 +168,25 @@ func (f *FightCell) Fight() bool {
 		fmt.Printf("防守方英雄存活数: %+v \n", f.mDefenceList.GetActiveCount())
 		f.initRoundInfo()
 		fmt.Println("战前信息", f.mRoundInfo.String())
-		// buff相关的先屏蔽掉
-		f.mAttackList.ImpactHeartBeat(nRound)
-		f.mDefenceList.ImpactHeartBeat(nRound)
 
 		// 根据速度排序
+		actionList := f.createActionList()
+		sort.Slice(actionList, func(i, j int) bool {
+			return actionList[i].Speed > actionList[j].Speed
+		})
 
-		f.mAttackList.HeartBeat(nRound)
-		f.mDefenceList.HeartBeat(nRound)
+		// 按顺序行动
+		for _, unit := range actionList {
+			unit.FightObj.ImpactHeartBeat(nRound)
+			unit.FightObj.HeartBeat(nRound)
+		}
+
+		// f.mAttackList.ImpactHeartBeat(nRound)
+		// f.mDefenceList.ImpactHeartBeat(nRound)
+
+		// f.mAttackList.HeartBeat(nRound)
+		// f.mDefenceList.HeartBeat(nRound)
+
 		fmt.Println("战后信息", f.mRoundInfo.String())
 		f.mFightInfo.AddRoundInfo(*f.mRoundInfo)
 		//spew.Dump(f.mRoundInfo.AttackInfo)
@@ -201,4 +220,24 @@ func (f *FightCell) InitDefendList(nDefendType int) {
 
 func (f *FightCell) GetFightInfo() *FightInfo {
 	return f.mFightInfo
+}
+
+func (f *FightCell) createActionList() []ActionUnit {
+	var list []ActionUnit
+
+	// 添加攻击方单位
+	for i := 0; i < MaxMatrixCellCount; i++ {
+		if pFightObj := f.mAttackList.GetFightObject(i); pFightObj != nil && pFightObj.IsValid() {
+			list = append(list, ActionUnit{FightObj: pFightObj, Speed: pFightObj.GetAttackSpeed()})
+		}
+	}
+
+	// 添加防守方单位
+	for i := 0; i < MaxMatrixCellCount; i++ {
+		if pFightObj := f.mDefenceList.GetFightObject(i); pFightObj != nil && pFightObj.IsValid() {
+			list = append(list, ActionUnit{FightObj: pFightObj, Speed: pFightObj.GetAttackSpeed()})
+		}
+	}
+
+	return list
 }

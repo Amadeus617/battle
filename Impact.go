@@ -10,7 +10,7 @@ type Impact struct {
 	pHolder        *FightObject //拥有者
 	pCaster        *FightObject //施放者
 	skillID        int          //技能ID
-	startTime      int          //开始时间
+	startTime      int          //开始时间-turn
 	life           int          //开始周期
 	logicTime      int          //开始作用时间
 	term           int          //开始间隔
@@ -66,14 +66,14 @@ func (impact *Impact) Init(nImpactID, conAttTimes, nRound, nSkillID int, pCaster
 			impact.conAttTimes = conAttTimes
 		}
 		break
-	case EmImpactLogic2,EmImpactLogic3:
+	case EmImpactLogic2, EmImpactLogic3:
 		//2=物理持续攻击
 		//逻辑参数3：持续时间，单位回合（10）
 		//逻辑参数4：生效间隔，单位回合（2）
 		impact.life += pRow.Param[2] - pRow.Param[3]
 		impact.term = pRow.Param[3]
 		break
-	case EmImpactLogic4,EmImpactLogic5:
+	case EmImpactLogic4, EmImpactLogic5:
 		//逻辑参数3：持续时间，单位回合（10）
 		impact.life += pRow.Param[2] - 1
 		break
@@ -90,10 +90,10 @@ func (impact *Impact) Init(nImpactID, conAttTimes, nRound, nSkillID int, pCaster
 	return true
 }
 
-//0=单次物理攻击；
-//逻辑参数1：从英雄物理攻击中取得的倍率（例：150）
-//逻辑参数2：额外增加的物理伤害（例：50）
-//如英雄物理攻击为100，则最终的技能物理攻击=英雄物理攻击（100）*逻辑参数1（150/100）+逻辑参数2（50）
+// 0=单次物理攻击；
+// 逻辑参数1：从英雄物理攻击中取得的倍率（例：150）
+// 逻辑参数2：额外增加的物理伤害（例：50）
+// 如英雄物理攻击为100，则最终的技能物理攻击=英雄物理攻击（100）*逻辑参数1（150/100）+逻辑参数2（50）
 func (impact Impact) ImpactLogic0() {
 	var (
 		pImpactInfo   *ImpactInfo
@@ -220,12 +220,12 @@ func (impact Impact) ImpactLogic1() {
 	}
 }
 
-//2=物理持续攻击
-//逻辑参数1：从英雄物理攻击中取得的倍率（例：150）
-//逻辑参数2：额外增加的物理伤害（例：50）
-//逻辑参数3：持续时间，单位回合（10）
-//逻辑参数4：生效间隔，单位回合（2）
-//此效果的最终效果为：每2回合对目标造成一次物理伤害，持续10回合（生效5次），每次造成的物理攻击具体数值=英雄物理攻击（100）*逻辑参数1（150/100）+逻辑参数2（50）
+// 2=物理持续攻击
+// 逻辑参数1：从英雄物理攻击中取得的倍率（例：150）
+// 逻辑参数2：额外增加的物理伤害（例：50）
+// 逻辑参数3：持续时间，单位回合（10）
+// 逻辑参数4：生效间隔，单位回合（2）
+// 此效果的最终效果为：每2回合对目标造成一次物理伤害，持续10回合（生效5次），每次造成的物理攻击具体数值=英雄物理攻击（100）*逻辑参数1（150/100）+逻辑参数2（50）
 func (impact Impact) ImpactLogic2() {
 	var (
 		pImpactInfo   *ImpactInfo
@@ -290,12 +290,12 @@ func (impact Impact) ImpactLogic2() {
 	impact.logicTime += impact.term
 }
 
-//3=持续魔法攻击
-//逻辑参数1：从英雄物理攻击（因为英雄默认没有魔法攻击）中取得的倍率（例：150）
-//逻辑参数2：额外增加的魔法伤害（例：50）
-//逻辑参数3：持续时间，单位回合（10）
-//逻辑参数4：生效间隔，单位回合（2）
-//此效果的最终效果为：每2回合对目标造成一次魔法伤害，持续10回合（生效5次），每次造成的魔法攻击具体数值=英雄物理攻击（100）*逻辑参数1（150/100）+逻辑参数2（50）
+// 3=持续魔法攻击
+// 逻辑参数1：从英雄物理攻击（因为英雄默认没有魔法攻击）中取得的倍率（例：150）
+// 逻辑参数2：额外增加的魔法伤害（例：50）
+// 逻辑参数3：持续时间，单位回合（10）
+// 逻辑参数4：生效间隔，单位回合（2）
+// 此效果的最终效果为：每2回合对目标造成一次魔法伤害，持续10回合（生效5次），每次造成的魔法攻击具体数值=英雄物理攻击（100）*逻辑参数1（150/100）+逻辑参数2（50）
 func (impact *Impact) ImpactLogic3() {
 	var (
 		pImpactInfo   *ImpactInfo
@@ -418,11 +418,11 @@ func (impact *Impact) ImpactLogic4() {
 	impact.logicTime += 1
 }
 
-//5=debuff削弱类
-//逻辑参数1：改变的英雄属性id，读取AttributeData.tab表。
-//逻辑参数2：改变的具体数值
-//逻辑参数3：持续时间，单位回合（10）
-//最终可实现的效果如敌人攻击减少X点持续10回合。
+// 5=debuff削弱类
+// 逻辑参数1：改变的英雄属性id，读取AttributeData.tab表。
+// 逻辑参数2：改变的具体数值
+// 逻辑参数3：持续时间，单位回合（10）
+// 最终可实现的效果如敌人攻击减少X点持续10回合。
 func (impact *Impact) ImpactLogic5() {
 	var (
 		pImpactInfo  *ImpactInfo

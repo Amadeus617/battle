@@ -98,6 +98,7 @@ func (list *FightObjList) HeartBeat(uTime int) {
 			fmt.Printf("第%+v回合, 英雄id %+v \n", uTime, list.mObjectList[i].GetGuid())
 			list.mObjectList[i].HeartBeat(uTime)
 			pAttackInfo := list.mObjectList[i].GetAttackInfo()
+			fmt.Printf("AttackInfo %#v \n", pAttackInfo)
 			if pAttackInfo != nil && pAttackInfo.IsValid() {
 				pFightCell := list.mObjectList[i].GetFightCell()
 				pRoundInfo := pFightCell.GetRoundInfo()

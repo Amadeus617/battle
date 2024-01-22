@@ -436,7 +436,7 @@ func (f *FightObject) GetImpactLogicType(nImpactID int) EmTypeImpactLogic {
 	default:
 		return EmTypeImpactLogicInvalid
 	}
-	return EmTypeImpactLogicInvalid
+	// return EmTypeImpactLogicInvalid
 }
 
 func (f *FightObject) AddImpact(nImpactID, conAttTimes, nRound, nSkillID int, pCaster *FightObject) EmImpactResult {

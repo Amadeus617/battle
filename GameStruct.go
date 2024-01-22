@@ -89,8 +89,8 @@ type ImpactInfo struct {
 	TargetList  [MaxMatrixCellCount]X_GUID
 	TargetCount int
 	ConAttTimes int
-	Hurts       [MaxMatrixCellCount][MaxConAttackTimes]int
-	Mp          [MaxMatrixCellCount]int //本次技能带给的魔法量变化 >0 减蓝 < 0 加蓝
+	Hurts       [MaxMatrixCellCount][MaxConAttackTimes]int // 属性变化列表
+	Mp          [MaxMatrixCellCount]int                    //本次技能带给的魔法量变化 >0 减蓝 < 0 加蓝
 }
 
 func (impact ImpactInfo) String() string {
@@ -150,8 +150,8 @@ func (s SkillAttack) IsValid() bool {
 // 出手信息
 type AttackInfo struct {
 	CastGuid X_GUID //对象guid
-	Skilled  bool   //魔法攻击还是普通攻击
-	//魔法攻击
+	Skilled  bool   //技能攻击还是普通攻击
+	//技能攻击
 	SkillAttack      [MaxEquipNumPerHero]*SkillAttack //如果是普通攻击先进行装备技能攻击
 	SkillAttackCount int
 	//普通攻击
