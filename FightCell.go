@@ -2,7 +2,6 @@ package GameFight
 
 import (
 	"fmt"
-	"sort"
 )
 
 type FightCell struct {
@@ -11,8 +10,9 @@ type FightCell struct {
 	mFightInfo   *FightInfo      //战斗信息提取
 	mRoundInfo   *FightRoundInfo //回合信息
 
-	mFightType EmTypeFight //战斗类型
-	mPlusAtt   int         //攻加成
+	mActionList *FightObjList //行动顺序列表
+	mFightType  EmTypeFight   //战斗类型
+	mPlusAtt    int           //攻加成
 }
 
 type ActionUnit struct {
@@ -23,6 +23,7 @@ type ActionUnit struct {
 func (f *FightCell) CleanUp() {
 	f.mAttackList.CleanUp()
 	f.mDefenceList.CleanUp()
+	f.mActionList.CleanUp()
 	f.mFightInfo.CleanUp()
 	f.mRoundInfo.CleanUp()
 	f.mFightType = EmTypeFightNormal
@@ -57,6 +58,11 @@ func (f *FightCell) GetAttackList() *FightObjList {
 // 防守方
 func (f *FightCell) GetDefenceList() *FightObjList {
 	return f.mDefenceList
+}
+
+// 行动顺序列表
+func (f *FightCell) GetActionList() *FightObjList {
+	return f.mActionList
 }
 
 func (f *FightCell) IsOver() bool {
@@ -170,22 +176,23 @@ func (f *FightCell) Fight() bool {
 		fmt.Println("战前信息", f.mRoundInfo.String())
 
 		// 根据速度排序
-		actionList := f.createActionList()
-		sort.Slice(actionList, func(i, j int) bool {
-			return actionList[i].Speed > actionList[j].Speed
-		})
+		// actionList := f.createActionList()
+		// sort.Slice(actionList, func(i, j int) bool {
+		// 	return actionList[i].Speed > actionList[j].Speed
+		// })
 
-		// 按顺序行动
-		for _, unit := range actionList {
-			unit.FightObj.ImpactHeartBeat(nRound)
-			unit.FightObj.HeartBeat(nRound)
-		}
+		// actionList.ImpactHeartBeat()
+		// // 按顺序行动
+		// for _, unit := range actionList {
+		// unit.FightObj.ImpactHeartBeat(nRound)
+		// 	unit.FightObj.HeartBeat(nRound)
+		// }
 
-		// f.mAttackList.ImpactHeartBeat(nRound)
-		// f.mDefenceList.ImpactHeartBeat(nRound)
+		f.mAttackList.ImpactHeartBeat(nRound)
+		f.mDefenceList.ImpactHeartBeat(nRound)
 
-		// f.mAttackList.HeartBeat(nRound)
-		// f.mDefenceList.HeartBeat(nRound)
+		f.mAttackList.HeartBeat(nRound)
+		f.mDefenceList.HeartBeat(nRound)
 
 		fmt.Println("战后信息", f.mRoundInfo.String())
 		f.mFightInfo.AddRoundInfo(*f.mRoundInfo)
