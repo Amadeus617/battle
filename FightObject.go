@@ -35,6 +35,23 @@ func (f *FightObject) CleanUp() {
 	f.fightDistance = 0
 }
 
+func (f *FightObject) HeartBeatTrigger(uTime int) bool {
+	if f.IsActive() {
+		fmt.Printf("第%+v回合, 英雄id %+v \n", uTime, f.GetGuid())
+		f.HeartBeat(uTime)
+		pAttackInfo := f.GetAttackInfo()
+		fmt.Printf("AttackInfo %#v \n", pAttackInfo)
+		if pAttackInfo != nil && pAttackInfo.IsValid() {
+			pFightCell := f.GetFightCell()
+			pRoundInfo := pFightCell.GetRoundInfo()
+			pRoundInfo.AddAttackInfo(*pAttackInfo)
+
+		}
+		return true
+	}
+	return false
+}
+
 func (f *FightObject) HeartBeat(uTime int) bool {
 	//清空上回合的战斗信息
 	f.attackInfo.CleanUp()
@@ -390,6 +407,15 @@ func (f *FightObject) CoolDownHeartBeat(uTime int) bool {
 func (f *FightObject) ClearImpactEffect() {
 	for i := 0; i < int(EmAttributeNumber); i++ {
 		f.impactEffect[i].AttrValue = 0
+	}
+}
+
+func (f *FightObject) ImpactHeartBeatTrigger(uTime int) {
+	if f.IsActive() {
+		//清空英雄的impact
+		f.ClearImpactEffect()
+		//impact攻击逻辑
+		f.ImpactHeartBeat(uTime)
 	}
 }
 

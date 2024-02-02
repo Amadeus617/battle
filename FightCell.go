@@ -2,6 +2,7 @@ package GameFight
 
 import (
 	"fmt"
+	"sort"
 )
 
 type FightCell struct {
@@ -176,23 +177,23 @@ func (f *FightCell) Fight() bool {
 		fmt.Println("战前信息", f.mRoundInfo.String())
 
 		// 根据速度排序
-		// actionList := f.createActionList()
-		// sort.Slice(actionList, func(i, j int) bool {
-		// 	return actionList[i].Speed > actionList[j].Speed
-		// })
+		actionList := f.createActionList()
+		sort.Slice(actionList, func(i, j int) bool {
+			return actionList[i].Speed > actionList[j].Speed
+		})
 
 		// actionList.ImpactHeartBeat()
-		// // 按顺序行动
-		// for _, unit := range actionList {
-		// unit.FightObj.ImpactHeartBeat(nRound)
-		// 	unit.FightObj.HeartBeat(nRound)
-		// }
+		// 按顺序行动
+		for _, unit := range actionList {
+			unit.FightObj.ImpactHeartBeatTrigger(nRound)
+			unit.FightObj.HeartBeatTrigger(nRound)
+		}
 
-		f.mAttackList.ImpactHeartBeat(nRound)
-		f.mDefenceList.ImpactHeartBeat(nRound)
+		// f.mAttackList.ImpactHeartBeat(nRound)
+		// f.mDefenceList.ImpactHeartBeat(nRound)
 
-		f.mAttackList.HeartBeat(nRound)
-		f.mDefenceList.HeartBeat(nRound)
+		// f.mAttackList.HeartBeat(nRound)
+		// f.mDefenceList.HeartBeat(nRound)
 
 		fmt.Println("战后信息", f.mRoundInfo.String())
 		f.mFightInfo.AddRoundInfo(*f.mRoundInfo)
