@@ -128,7 +128,7 @@ func (s *SkillAttack) String() string {
 	for i := 0; i < s.ImpactCount; i++ {
 		impactString += s.Impact[i].String()
 	}
-	return fmt.Sprintf("技能:%+v 命中目标%+v, Impact数量%+v\n, Impact信息:%+v", s.SkillID, s.SkillTarget, s.ImpactCount, impactString)
+	return fmt.Sprintf("========技能:%+v 命中目标%+v, Impact数量%+v\n, Impact信息:%+v========", s.SkillID, s.SkillTarget, s.ImpactCount, impactString)
 }
 func (s *SkillAttack) AddImpactInfo(info *ImpactInfo) {
 	s.Impact[s.ImpactCount] = info
@@ -168,14 +168,14 @@ func (c AttackInfo) String() string {
 	for i := 0; i < c.SkillAttackCount; i++ {
 		skillAttackString += c.SkillAttack[i].String()
 	}
-	return fmt.Sprintf("攻击方英雄id: %+v  防守方英雄id: %+v, \n"+
+	return fmt.Sprintf("========攻击方英雄id: %+v  防守方英雄id: %+v, \n"+
 		"是否使用了技能攻击 %+v,"+
 		"是否命中:%+v,"+
 		"是否暴击:%+v,\n"+
 		"攻击伤害:%+v, "+
 		"是否有反击:%+v, "+
 		"反击伤害:%+v\n"+
-		"技能攻击信息:%+v \n",
+		"技能攻击信息:%+v ============\n",
 		c.CastGuid, c.SkillTarget, c.Skilled, c.BHit, c.BStrike, c.Hurt, c.BBackAttack, c.BackAttackHurt, skillAttackString)
 }
 
@@ -272,15 +272,15 @@ type FightRoundInfo struct {
 
 func (f *FightRoundInfo) String() string {
 
-	var s string = "攻击方信息:\n"
+	var s string = "=======攻击方信息:========\n"
 	for i := 0; i < f.AttackObjectCount; i++ {
 		s += f.AttackObjectInfo[i].String() + ""
 	}
-	s += "防守方信息:\n"
+	s += "=======防守方信息:========\n"
 	for i := 0; i < f.DefendObjectCount; i++ {
 		s += f.DefendObjectInfo[i].String() + ""
 	}
-	s += "攻击信息\n"
+	s += "=========攻击信息=========\n"
 	for i := 0; i < f.AttInfoCount; i++ {
 		s += f.AttackInfo[i].String() + ""
 	}

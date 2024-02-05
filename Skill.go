@@ -50,9 +50,10 @@ func (s Skill) CheckCondition(nRound int) bool {
 	if err != nil {
 		return false
 	}
-	if s.pCaster.GetMP() < pRow.NeedMP {
-		return false
-	}
+	// if s.pCaster.GetMP() < pRow.NeedMP {
+	// 	fmt.Printf("CheckCondition Skill 222 ==> %#v NeedMP: %#v \n ", s.pCaster.GetMP(), pRow.NeedMP)
+	// 	return false
+	// }
 	nRand := rand.Intn(10000)
 	if nRand > pRow.SkillRate {
 		return false

@@ -530,7 +530,7 @@ func (f *FightObject) GetOwnerList() *FightObjList {
 func (f *FightObject) GetHP() int {
 	nEffectValue := f.impactEffect[EmAttributeHp].AttrValue
 	nEndValue := f.FightDBData.HP + nEffectValue
-	nMaxHP := f.GetMaxMP()
+	nMaxHP := f.GetMaxHP()
 
 	if nEndValue > nMaxHP {
 		nEndValue = nMaxHP
@@ -542,7 +542,7 @@ func (f *FightObject) GetHP() int {
 }
 
 func (f *FightObject) SetHP(nHP int) {
-	nMaxHP := f.GetMaxMP()
+	nMaxHP := f.GetMaxHP()
 	if nHP > nMaxHP {
 		nHP = nMaxHP
 	}

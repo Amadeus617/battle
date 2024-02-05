@@ -170,11 +170,11 @@ func (f *FightCell) Fight() bool {
 			}
 			return true
 		}
-		fmt.Printf("第%+v回合:\n", nRound)
+		fmt.Printf("======第%+v回合:=======\n", nRound)
 		fmt.Printf("攻击方英雄存活数: %+v \n", f.mAttackList.GetActiveCount())
 		fmt.Printf("防守方英雄存活数: %+v \n", f.mDefenceList.GetActiveCount())
 		f.initRoundInfo()
-		fmt.Println("战前信息", f.mRoundInfo.String())
+		fmt.Println("[战前信息] \n", f.mRoundInfo.String())
 
 		// 根据速度排序
 		actionList := f.createActionList()
@@ -195,7 +195,7 @@ func (f *FightCell) Fight() bool {
 		// f.mAttackList.HeartBeat(nRound)
 		// f.mDefenceList.HeartBeat(nRound)
 
-		fmt.Println("战后信息", f.mRoundInfo.String())
+		fmt.Println("[战后信息] \n", f.mRoundInfo.String())
 		f.mFightInfo.AddRoundInfo(*f.mRoundInfo)
 		//spew.Dump(f.mRoundInfo.AttackInfo)
 	}
